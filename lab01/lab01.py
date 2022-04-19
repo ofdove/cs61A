@@ -11,6 +11,16 @@ def falling(n, k):
     1
     """
     "*** YOUR CODE HERE ***"
+    def fac(c):
+        if c == 1 or c == 0:
+            return 1
+        else: return c * fac(c-1)
+    if k == 0:
+        return 1
+    else: return fac(n)//fac(n-k)
+        
+        
+        
 
 
 def sum_digits(y):
@@ -27,6 +37,10 @@ def sum_digits(y):
     6
     """
     "*** YOUR CODE HERE ***"
+    if y // 10 == 0:
+        return y % 10
+    else:
+        return y % 10 + sum_digits(y // 10)
 
 
 def double_eights(n):
@@ -45,3 +59,12 @@ def double_eights(n):
     False
     """
     "*** YOUR CODE HERE ***"
+    d = list(map(int, str(n)))
+    last_pop = d.pop(0)
+    while d != []:
+        now_pop = d.pop(0)
+        if now_pop == last_pop and last_pop == 8:
+            return True
+        else:
+            last_pop = now_pop
+    return False    
