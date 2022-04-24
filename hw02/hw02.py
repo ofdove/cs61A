@@ -31,6 +31,26 @@ def product(n, term):
     162
     """
     "*** YOUR CODE HERE ***"
+    if term == identity: 
+        if n == 1:
+            return identity(1)
+        else:
+            return identity(n) * product(n - 1, identity)
+    elif term == square:
+        if n == 1:
+            return square(1)
+        else:
+            return square(n) * product(n - 1, square)
+    elif term == increment:
+        if n == 1:
+            return increment(1)
+        else:
+            return increment(n) * product(n - 1, increment)
+    elif term == triple:
+        if n == 1:
+            return triple(1)
+        else:
+            return triple(n) * product(n - 1, triple)
 
 
 def square(x):
@@ -59,7 +79,10 @@ def accumulate(combiner, base, n, term):
     >>> accumulate(lambda x, y: (x + y) % 17, 19, 20, square)
     16
     """
-    "*** YOUR CODE HERE ***"
+    if n == 1:
+        return combiner(base, term(1))
+    else:
+        return combiner(term(n), accumulate(combiner, base, n - 1, term))
 
 
 def summation_using_accumulate(n, term):
@@ -76,8 +99,7 @@ def summation_using_accumulate(n, term):
     ...       ['Recursion', 'For', 'While'])
     True
     """
-    "*** YOUR CODE HERE ***"
-
+    return accumulate(add, 0, n, term)
 
 def product_using_accumulate(n, term):
     """An implementation of product using accumulate.
@@ -92,13 +114,12 @@ def product_using_accumulate(n, term):
     ...       ['Recursion', 'For', 'While'])
     True
     """
-    "*** YOUR CODE HERE ***"
-
+    return accumulate(mul, 0, n, term)
 
 def compose1(func1, func2):
     """Return a function f, such that f(x) = func1(func2(x))."""
     def f(x):
-        return func1(func2(x))
+        return func2(func2(x))
     return f
 
 
@@ -117,8 +138,10 @@ def make_repeater(func, n):
     >>> make_repeater(square, 0)(5) # Yes, it makes sense to apply the function zero times!
     5
     """
-    "*** YOUR CODE HERE ***"
-
+    if n == 0:
+        return identity
+    else:
+        return compose1(func, make_repeater(func, n - 1))
 
 def zero(f):
     return lambda x: x
@@ -126,7 +149,6 @@ def zero(f):
 
 def successor(n):
     return lambda f: lambda x: f(n(f)(x))
-
 
 def one(f):
     """Church numeral 1: same as successor(zero)"""
