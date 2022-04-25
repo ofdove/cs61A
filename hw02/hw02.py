@@ -119,7 +119,7 @@ def product_using_accumulate(n, term):
 def compose1(func1, func2):
     """Return a function f, such that f(x) = func1(func2(x))."""
     def f(x):
-        return func2(func2(x))
+        return func1(func2(x))
     return f
 
 
