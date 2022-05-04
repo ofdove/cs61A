@@ -1,5 +1,6 @@
 """Typing test implementation"""
 
+from lib2to3.pytree import type_repr
 from utils import lower, split, remove_punctuation, lines_from_file
 from ucb import main, interact, trace
 from datetime import datetime
@@ -163,6 +164,19 @@ def autocorrect(typed_word, valid_words, diff_function, limit):
     """
     # BEGIN PROBLEM 5
     "*** YOUR CODE HERE ***"
+    if typed_word in valid_words:
+        return typed_word
+    else:
+        least_diff_word = typed_word 
+        least_diff = 2147483647
+        for word in valid_words:
+            if diff_function(typed_word, word, limit) > limit:
+                continue
+            else:
+                if diff_function(typed_word, word, limit) < least_diff:
+                    least_diff = diff_function(typed_word, word, limit)
+                    least_diff_word = word
+        return least_diff_word
     # END PROBLEM 5
 
 
@@ -189,8 +203,19 @@ def sphinx_switches(start, goal, limit):
     5
     """
     # BEGIN PROBLEM 6
-    assert False, 'Remove this line'
+    if limit + 1 == 0:
+        return 0
+    elif len(start) == 0:
+        return len(goal)  
+    elif  len(goal) == 0:
+        return len(start)
+    elif start[0] == goal[0]:
+        return 0 + sphinx_switches(start[1::], goal[1::], limit)
+    else:
+        return 1 + sphinx_switches(start[1::], goal[1::], limit - 1)
+
     # END PROBLEM 6
+
 
 
 def pawssible_patches(start, goal, limit):
@@ -210,26 +235,36 @@ def pawssible_patches(start, goal, limit):
     >>> pawssible_patches("ckiteus", "kittens", big_limit) # ckiteus -> kiteus -> kitteus -> kittens
     3
     """
-    assert False, 'Remove this line'
-
-    if ______________:  # Fill in the condition
+    if limit + 1== 0:  # Fill in the condition
         # BEGIN
         "*** YOUR CODE HERE ***"
+        return 0
         # END
 
-    elif ___________:  # Feel free to remove or add additional cases
+    elif len(start) == 0:
+        return len(goal)  
+
+    elif  len(goal) == 0:
+        return len(start)
+
+    elif start[0] == goal[0]:  # Feel free to remove or add additional cases
         # BEGIN
         "*** YOUR CODE HERE ***"
+        return 0 + pawssible_patches(start[1::], goal[1::], limit)
         # END
 
     else:
-        add = ...  # Fill in these lines
-        remove = ...
-        substitute = ...
+        sub = pawssible_patches(start[1::], goal[1::], limit - 1)
+        add = pawssible_patches(start[1::], goal, limit - 1) 
+        rem = pawssible_patches(goal[0] + start, goal, limit - 1)
+        return 1 + min(add, min(rem, sub))
         # BEGIN
         "*** YOUR CODE HERE ***"
         # END
 
+# if __name__ == "__main__":
+#     big_limit = 10
+#     pawssible_patches("tesng", "testing", big_limit)
 
 def final_diff(start, goal, limit):
     """A diff function that takes in a string START, a string GOAL, and a number LIMIT.
@@ -270,6 +305,17 @@ def report_progress(typed, prompt, user_id, send):
     """
     # BEGIN PROBLEM 8
     "*** YOUR CODE HERE ***"
+    cnt = 0
+    for i in range(len(typed)):
+        if typed[i] == prompt[i]:
+            cnt += 1
+        else:
+            break
+    user_progress = {'id': user_id, 'progress': cnt / len(prompt)}
+    print_progress = lambda d: print('ID:', d['id'], 'Progress:', d['progress'])
+    print_progress(user_progress)
+    return cnt / len(prompt)
+
     # END PROBLEM 8
 
 
@@ -303,7 +349,15 @@ def time_per_word(times_per_player, words):
     """
     # BEGIN PROBLEM 9
     "*** YOUR CODE HERE ***"
-    # END PROBLEM 9
+    real_time_per_player = [[x[i + 1] - x[i] for i in range(len(x) - 1)] for x in times_per_player]
+    game = (words, real_time_per_player)
+    return game
+
+# if __name__ == "__main__":
+#     p = [[1, 4, 6, 7], [0, 4, 6, 9]]
+#     words = ['This', 'is', 'fun']
+#     print(time_per_word(p, words))
+#     # END PROBLEM 9
 
 
 def fastest_words(game):
@@ -321,6 +375,16 @@ def fastest_words(game):
     word_indices = range(len(all_words(game)))    # contains an *index* for each word
     # BEGIN PROBLEM 10
     "*** YOUR CODE HERE ***"
+    ans_list = [[] for k in player_indices]
+    for i in word_indices:
+        times = [time(game, j, i) for j in player_indices]
+        # print("DEBUG: times:", times)
+        # print("DEBUG: index:",times.index(min(times)))
+        ans_list[times.index(min(times))].append(word_at(game, i))
+        # print("DEBUG: ", ans_list)
+    return ans_list 
+
+
     # END PROBLEM 10
 
 
@@ -331,6 +395,7 @@ def game(words, times):
     assert all([isinstance(i, (int, float)) for t in times for i in t]), 'times lists should contain numbers'
     assert all([len(t) == len(words) for t in times]), 'There should be one word per time.'
     return [words, times]
+
 
 
 def word_at(game, word_index):
@@ -414,3 +479,10 @@ def run(*args):
     args = parser.parse_args()
     if args.t:
         run_typing_test(args.topic)
+
+if __name__ == "__main__":
+    p0 = [2, 2, 3]
+    p1 = [6, 1, 2]
+    fastest_words(game(['What', 'great', 'luck'], [p0, p1]))
+   
+
