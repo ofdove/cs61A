@@ -17,7 +17,6 @@ def couple(s, t):
         element = [s[i], t[i]]
         couple.append(element)
     return couple
-        
 
 
 from lib2to3.pgen2 import token
@@ -36,7 +35,10 @@ def distance(city_a, city_b):
     5.0
     """
     "*** YOUR CODE HERE ***"
-    return sqrt(abs(get_lat(city_a) - get_lat(city_b)) ** 2 + abs(get_lon(city_a) - get_lon(city_b)) ** 2)
+    return sqrt(
+        abs(get_lat(city_a) - get_lat(city_b)) ** 2
+        + abs(get_lon(city_a) - get_lon(city_b)) ** 2
+    )
 
 
 def closer_city(lat, lon, city_a, city_b):
@@ -55,9 +57,13 @@ def closer_city(lat, lon, city_a, city_b):
     'Bucharest'
     """
     "*** YOUR CODE HERE ***"
-    
-    destination = make_city('', lat, lon)
-    return get_name(city_a) if distance(destination, city_a) <= distance(destination, city_b) else get_name(city_b)
+
+    destination = make_city("", lat, lon)
+    return (
+        get_name(city_a)
+        if distance(destination, city_a) <= distance(destination, city_b)
+        else get_name(city_b)
+    )
 
 
 def check_city_abstraction():
@@ -85,6 +91,7 @@ def check_city_abstraction():
 
 
 # Treat all the following code as being behind an abstraction layer, you shouldn't need to look at it!
+
 
 def make_city(name, lat, lon):
     """
@@ -146,7 +153,7 @@ change_abstraction.changed = False
 
 
 def berry_finder(t):
-    """Returns True if t contains a node with the value 'berry' and 
+    """Returns True if t contains a node with the value 'berry' and
     False otherwise.
 
     >>> scrat = tree('berry')
@@ -163,10 +170,11 @@ def berry_finder(t):
     True
     """
     "*** YOUR CODE HERE ***"
-    if label(t) == 'berry':
+    if label(t) == "berry":
         return True
     else:
         return any(berry_finder(branch) for branch in branches(t))
+
 
 def sprout_leaves(t, leaves):
     """Sprout new leaves containing the data in leaves at each leaf in
@@ -204,8 +212,9 @@ def sprout_leaves(t, leaves):
     "*** YOUR CODE HERE ***"
     if is_leaf(t):
         return tree(label(t), [tree(x) for x in leaves])
-    return tree(label(t), [sprout_leaves(branch, leaves) for branch in branches(t)]) 
-    
+    return tree(label(t), [sprout_leaves(branch, leaves) for branch in branches(t)])
+
+
 # Abstraction tests for sprout_leaves and berry_finder
 
 
@@ -265,7 +274,11 @@ def coords(fn, seq, lower, upper):
     [[-2, 4], [1, 1], [3, 9]]
     """
     "*** YOUR CODE HERE ***"
-    return [[seq[i], fn(seq[i])] for i in range(len(seq)) if fn(seq[i]) <= upper and fn(seq[i]) >= lower]
+    return [
+        [seq[i], fn(seq[i])]
+        for i in range(len(seq))
+        if fn(seq[i]) <= upper and fn(seq[i]) >= lower
+    ]
 
 
 def riffle(deck):
@@ -278,7 +291,10 @@ def riffle(deck):
     [0, 10, 1, 11, 2, 12, 3, 13, 4, 14, 5, 15, 6, 16, 7, 17, 8, 18, 9, 19]
     """
     "*** YOUR CODE HERE ***"
-    return [deck[i // 2] if i % 2 == 0 else deck[(i - 1)//2 + len(deck)//2] for i in range(len(deck))]
+    return [
+        deck[i // 2] if i % 2 == 0 else deck[(i - 1) // 2 + len(deck) // 2]
+        for i in range(len(deck))
+    ]
 
 
 def add_trees(t1, t2):
@@ -334,13 +350,13 @@ def build_successors_table(tokens):
     ['We']
     """
     table = {}
-    prev = '.'
+    prev = "."
     for word in tokens:
         if prev not in table:
             table[prev] = [word]
         else:
             table[prev].append(word)
-        prev = word 
+        prev = word
     return table
 
 
@@ -355,24 +371,29 @@ def construct_sent(word, table):
     'Sentences are cool.'
     """
     import random
-    result = ''
-    while word not in ['.', '!', '?']:
+
+    result = ""
+    while word not in [".", "!", "?"]:
         "*** YOUR CODE HERE ***"
-        result = result + ' ' + word 
+        result = result + " " + word
         pick = random.choice(table[word])
         word = pick
     return result.strip() + word
 
 
-def shakespeare_tokens(path='shakespeare.txt', url='http://composingprograms.com/shakespeare.txt'):
+def shakespeare_tokens(
+    path="shakespeare.txt", url="http://composingprograms.com/shakespeare.txt"
+):
     """Return the words of Shakespeare's plays as a list."""
     import os
     from urllib.request import urlopen
+
     if os.path.exists(path):
-        return open(path, encoding='ascii').read().split()
+        return open(path, encoding="ascii").read().split()
     # else:
     #     shakespeare = urlopen(url)
     #     return shakespeare.read().decode(encoding='ascii').split()
+
 
 # Uncomment the following two lines
 tokens = shakespeare_tokens()
@@ -381,27 +402,29 @@ table = build_successors_table(tokens)
 
 def random_sent():
     import random
-    return construct_sent(random.choice(table['.']), table)
+
+    return construct_sent(random.choice(table["."]), table)
 
 
 # Tree ADT
+
 
 def tree(label, branches=[]):
     """Construct a tree with the given label value and a list of branches."""
     if change_abstraction.changed:
         for branch in branches:
-            assert is_tree(branch), 'branches must be trees'
-        return {'label': label, 'branches': list(branches)}
+            assert is_tree(branch), "branches must be trees"
+        return {"label": label, "branches": list(branches)}
     else:
         for branch in branches:
-            assert is_tree(branch), 'branches must be trees'
+            assert is_tree(branch), "branches must be trees"
         return [label] + list(branches)
 
 
 def label(tree):
     """Return the label value of a tree."""
     if change_abstraction.changed:
-        return tree['label']
+        return tree["label"]
     else:
         return tree[0]
 
@@ -409,7 +432,7 @@ def label(tree):
 def branches(tree):
     """Return the list of branches of the given tree."""
     if change_abstraction.changed:
-        return tree['branches']
+        return tree["branches"]
     else:
         return tree[1:]
 
@@ -465,7 +488,7 @@ def print_tree(t, indent=0):
       6
         7
     """
-    print('  ' * indent + str(label(t)))
+    print("  " * indent + str(label(t)))
     for b in branches(t):
         print_tree(b, indent + 1)
 
@@ -480,5 +503,3 @@ def copy_tree(t):
     5
     """
     return tree(label(t), [copy_tree(b) for b in branches(t)])
-
-
