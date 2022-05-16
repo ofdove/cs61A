@@ -678,6 +678,7 @@ class SlowThrower(ThrowerAnt):
 
     name = "Slow"
     food_cost = 4
+    damage = 0
     # BEGIN Problem Optional 2
     implemented = True  # Change to True to view in the GUI
     # END Problem Optional 2
@@ -692,8 +693,9 @@ class ScaryThrower(ThrowerAnt):
 
     name = "Scary"
     food_cost = 6
+    damage = 0
     # BEGIN Problem Optional 2
-    implemented = False  # Change to True to view in the GUI
+    implemented = True  # Change to True to view in the GUI
     # END Problem Optional 2
 
     def throw_at(self, target):
