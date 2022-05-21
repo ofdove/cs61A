@@ -179,6 +179,16 @@ def find_path(t, x):
     #         if path:
     #             return [t.label] + path
     
+def find_paths(t, x):
+    paths = []
+    if t.label == x:
+        return [t.label]
+    for b in t.branches:
+        path = find_paths(b, x)
+        if path:
+            paths.append([t.label] + path)        
+    return paths
+
 def prune_small(t, n):
     """Prune the tree mutatively, keep at most n branches on each node
     with the smallest label."""
@@ -187,6 +197,15 @@ def prune_small(t, n):
         t.branches.remove(largest)
     for b in t.branches:
         prune_small(b, n)
+    
+def sum_nums(s):
+    """Takes in a list and return the sum of all its elements"""
+    if s.rest is Link.empty:
+        return s.first
+    else:
+        return s.first + sum_nums(s.rest)
+
+        
 
 class Link:
     """A linked list.
@@ -266,6 +285,6 @@ class Tree:
         return print_tree(self).rstrip()
 
 if __name__ == "__main__":
-    t3 = Tree(6, [Tree(1), Tree(3, [Tree(1), Tree(2), Tree(3)]),Tree(5, [Tree(3), Tree(4)])])
-    prune_small(t3, 2)
-    print(t3)
+    tree_ex = Tree(2, [Tree(7, [Tree(3), Tree(6, [Tree(5), Tree(11)])]), 
+            Tree(1, [Tree(5)])])
+    print(find_paths(tree_ex, 5))

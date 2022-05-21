@@ -2,6 +2,7 @@ from cProfile import label
 from lib2to3.pytree import Leaf
 from os import path
 from re import L
+from xmlrpc.client import MAXINT
 
 
 class VendingMachine:
@@ -41,7 +42,9 @@ class VendingMachine:
     >>> w.vend()
     'Here is your soda.'
     """
+
     "*** YOUR CODE HERE ***"
+
     def __init__(self, product, price):
         self._product = product
         self._price = price
@@ -50,34 +53,29 @@ class VendingMachine:
 
     def vend(self):
         if self._inventory == 0:
-            return f'Inventory empty. Restocking required.'
+            return f"Inventory empty. Restocking required."
         elif self._balance < self._price:
-            return f'You must add ${self._price - self._balance} more funds.'
+            return f"You must add ${self._price - self._balance} more funds."
         elif self._balance == self._price:
             self._balance = 0
             self._inventory -= 1
-            return f'Here is your {self._product}.'
+            return f"Here is your {self._product}."
         else:
-            regist = self._balance
+            register = self._balance
             self._balance = 0
             self._inventory -= 1
-            return f'Here is your {self._product} and ${regist - self._price} change.'
+            return f"Here is your {self._product} and ${register - self._price} change."
 
     def add_funds(self, money):
         if self._inventory == 0:
-            return f'Inventory empty. Restocking required. Here is your ${money}.'
+            return f"Inventory empty. Restocking required. Here is your ${money}."
         else:
             self._balance += money
-            return f'Current balance: ${self._balance}'
-        
+            return f"Current balance: ${self._balance}"
+
     def restock(self, stock):
         self._inventory += stock
-        return f'Current {self._product} stock: {self._inventory}'
-
-    
-
-
-        
+        return f"Current {self._product} stock: {self._inventory}"
 
 
 def store_digits(n):
@@ -100,11 +98,11 @@ def store_digits(n):
         return Link(n)
     else:
         i = 0
-        regist = n
-        while regist != 0:
-            regist = regist // 10
+        register = n
+        while register != 0:
+            register = register // 10
             i += 1
-        return Link(n // (10 ** (i - 1)), store_digits(n % (10 ** (i - 1)))) 
+        return Link(n // (10 ** (i - 1)), store_digits(n % (10 ** (i - 1))))
 
 
 def path_yielder(t, value):
@@ -143,15 +141,16 @@ def path_yielder(t, value):
     """
 
     "*** YOUR CODE HERE ***"
-    if t.label == value: 
+    if t.label == value:
         yield [t.label]
-        
+
     if not t.is_leaf():
         for branch in t.branches:
             for i in path_yielder(branch, value):
-                yield [t.label] + i 
+                yield [t.label] + i
 
         "*** YOUR CODE HERE ***"
+
 
 class Mint:
     """A mint creates coins by stamping on years.
@@ -182,28 +181,29 @@ class Mint:
     >>> dime.worth()     # 20 cents + (155 - 50 years)
     125
     """
+
     current_year = 2020
 
     def __init__(self):
         self.update()
-        self.create()
 
     def create(self, kind):
         "*** YOUR CODE HERE ***"
-        self = kind
+        return kind(self.year)
 
     def update(self):
         "*** YOUR CODE HERE ***"
-        
-
+        self.year = Mint.current_year
 
 
 class Coin:
     def __init__(self, year):
-        self.year = Mint.current_year
+        self.year = year
 
     def worth(self):
         "*** YOUR CODE HERE ***"
+        age = Mint.current_year - self.year
+        return self.cents + (age if age <= 50 else age - 50)
 
 
 class Nickel(Coin):
@@ -240,6 +240,39 @@ def is_bst(t):
     False
     """
     "*** YOUR CODE HERE ***"
+    if not t:
+        return True
+
+    def helper(t, bst_min, bst_max):
+        if bst_min is not None and t.label < bst_min:
+            return False
+        if bst_max is not None and t.label > bst_max:
+            return False
+
+        if not t.branches:
+            return True
+        elif len(t.branches) == 1:
+            if t.branches[0].label > t.label:
+                right = (
+                    helper(t.branches[0], t.label, bst_max) if t.branches[0] else True
+                )
+                return right
+            else:
+                left = (
+                    helper(t.branches[0], bst_min, t.label) if t.branches[0] else True
+                )
+                return left
+        else:
+            left = helper(t.branches[0], bst_min, t.label) if t.branches[0] else True
+            if left:
+                right = (
+                    helper(t.branches[1], t.label, bst_max) if t.branches[1] else True
+                )
+                return right
+            else:
+                return False
+
+    return helper(t, None, None)
 
 
 def preorder(t):
@@ -253,6 +286,9 @@ def preorder(t):
     [2, 4, 6]
     """
     "*** YOUR CODE HERE ***"
+    return [t.label] + sum(
+        [preorder(b) for b in t.branches], []
+    )  # start参数为[], 即将这个列表转化为一维列表
 
 
 def generate_preorder(t):
@@ -267,6 +303,9 @@ def generate_preorder(t):
     [2, 3, 4, 5, 6, 7]
     """
     "*** YOUR CODE HERE ***"
+    yield t.label
+    for b in t.branches:
+        yield from generate_preorder(b)
 
 
 class Link:
@@ -289,6 +328,7 @@ class Link:
     >>> print(s)                             # Prints str(s)
     <5 7 <8 9>>
     """
+
     empty = ()
 
     def __init__(self, first, rest=empty):
@@ -298,17 +338,17 @@ class Link:
 
     def __repr__(self):
         if self.rest is not Link.empty:
-            rest_repr = ', ' + repr(self.rest)
+            rest_repr = ", " + repr(self.rest)
         else:
-            rest_repr = ''
-        return 'Link(' + repr(self.first) + rest_repr + ')'
+            rest_repr = ""
+        return "Link(" + repr(self.first) + rest_repr + ")"
 
     def __str__(self):
-        string = '<'
+        string = "<"
         while self.rest is not Link.empty:
-            string += str(self.first) + ' '
+            string += str(self.first) + " "
             self = self.rest
-        return string + str(self.first) + '>'
+        return string + str(self.first) + ">"
 
 
 class Tree:
@@ -333,20 +373,21 @@ class Tree:
 
     def __repr__(self):
         if self.branches:
-            branch_str = ', ' + repr(self.branches)
+            branch_str = ", " + repr(self.branches)
         else:
-            branch_str = ''
-        return 'Tree({0}{1})'.format(self.label, branch_str)
+            branch_str = ""
+        return "Tree({0}{1})".format(self.label, branch_str)
 
     def __str__(self):
         def print_tree(t, indent=0):
-            tree_str = '  ' * indent + str(t.label) + "\n"
+            tree_str = "  " * indent + str(t.label) + "\n"
             for b in t.branches:
                 tree_str += print_tree(b, indent + 1)
             return tree_str
+
         return print_tree(self).rstrip()
 
+
 if __name__ == "__main__":
-    t1 = Tree(1, [Tree(2, [Tree(3), Tree(4, [Tree(6)]), Tree(5)]), Tree(5)])
-    m = path_yielder(t1, 6)
-    print(list(m))
+    t1 = Tree(6, [Tree(2, [Tree(1), Tree(4)]), Tree(7, [Tree(7), Tree(8)])])
+    is_bst(t1)
