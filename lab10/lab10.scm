@@ -1,4 +1,10 @@
-(define (over-or-under num1 num2) 'YOUR-CODE-HERE)
+(define (over-or-under num1 num2) 'YOUR-CODE-HERE
+  (cond
+   ((< num1 num2) -1)
+   ((= num1 num2) 0)
+   ((> num1 num2) 1)
+   )
+  )
 
 ; ;; Tests
 (over-or-under 1 2)
@@ -10,7 +16,9 @@
 (over-or-under 1 1)
 
 ; expect 0
-(define (make-adder num) 'YOUR-CODE-HERE)
+(define (make-adder num) 'YOUR-CODE-HERE
+  (lambda(inc) (+ num inc))
+  )
 
 ; ;; Tests
 (define adder (make-adder 5))
@@ -18,11 +26,23 @@
 (adder 8)
 
 ; expect 13
-(define (composed f g) 'YOUR-CODE-HERE)
+(define (composed f g) 'YOUR-CODE-HERE
+  (lambda(x) (f (g x)))
+  )
 
-(define lst 'YOUR-CODE-HERE)
+(define lst (list (list 1) 2 (list 3 4) 5))
 
-(define (remove item lst) 'YOUR-CODE-HERE)
+(define (remove item lst) 'YOUR-CODE-HERE
+  (cond
+   ((null? lst) nil)
+   ((eqv? item (car lst)) (remove item (cdr lst)))
+   (else
+        (cons (car lst) (remove item (cdr lst))))
+   )
+  )
+;; (define (remove item lst) 'YOUR-CODE-HERE
+;;   (filter (lambda (x) (not (eqv? item))) lst)
+;;   )
 
 ; ;; Tests
 (remove 3 nil)
