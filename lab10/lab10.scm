@@ -34,7 +34,7 @@
 
 (define (remove item lst) 'YOUR-CODE-HERE
   (cond
-   ((null? lst) nil)
+   ((null? lst) #nil)
    ((eqv? item (car lst)) (remove item (cdr lst)))
    (else
         (cons (car lst) (remove item (cdr lst))))
@@ -45,7 +45,7 @@
 ;;   )
 
 ; ;; Tests
-(remove 3 nil)
+(remove 3 #nil)
 
 ; expect ()
 (remove 3 '(1 3 5))
