@@ -363,7 +363,3 @@ global_env = {
     "sub": PrimitiveFunction(operator.sub),
     "truediv": PrimitiveFunction(operator.truediv),
 }
-
-if __name__ == "__main__":
-    from reader import read
-    read('(lambda x: x(x))(lambda y: 4)').eval(global_env)
