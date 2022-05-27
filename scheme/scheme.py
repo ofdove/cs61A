@@ -3,6 +3,8 @@
 import sys
 import os
 
+from click import argument
+
 from scheme_builtins import *
 from scheme_reader import *
 from ucb import main, trace
@@ -37,6 +39,9 @@ def scheme_eval(expr, env, _=None):  # Optional third argument is ignored
         # BEGIN PROBLEM 4
         "*** YOUR CODE HERE ***"
         # END PROBLEM 4
+        operator = scheme_eval(expr.first, env)
+        operands = expr.rest.map(lambda x: scheme_eval(x, env))
+        return scheme_apply(operator, operands, env)
 
 
 def self_evaluating(expr):
@@ -71,7 +76,19 @@ def eval_all(expressions, env):
     2
     """
     # BEGIN PROBLEM 7
-    return scheme_eval(expressions.first, env)  # replace this with lines of your own code
+    if expressions is not nil:
+        # scheme_eval(expressions.first, env)
+        if expressions.rest is not nil:
+            scheme_eval(expressions.first, env)
+            return eval_all(expressions.rest, env)
+        else:
+            if type(expressions.first) is Pair or type(expressions.first) is str:
+                return scheme_eval(expressions.first, env) 
+            else:
+                return expressions.first
+    else:
+        return None
+    # return scheme_eval(expressions.first, env)  # replace this with lines of your own code
     # END PROBLEM 7
 
 ################
@@ -97,12 +114,17 @@ class Frame:
         """Define Scheme SYMBOL to have VALUE."""
         # BEGIN PROBLEM 2
         "*** YOUR CODE HERE ***"
+        self.bindings[symbol] = value
         # END PROBLEM 2
 
     def lookup(self, symbol):
         """Return the value bound to SYMBOL. Errors if SYMBOL is not found."""
         # BEGIN PROBLEM 2
         "*** YOUR CODE HERE ***"
+        if symbol in self.bindings:
+            return self.bindings[symbol]
+        elif self.parent:
+            return self.parent.lookup(symbol) 
         # END PROBLEM 2
         raise SchemeError('unknown identifier: {0}'.format(symbol))
 
@@ -163,6 +185,16 @@ class BuiltinProcedure(Procedure):
         arguments_list = []
         # BEGIN PROBLEM 3
         "*** YOUR CODE HERE ***"
+        def convert(args):
+            convert_list = []
+            while args is not nil:
+                convert_list.append(args.first)
+                args = args.rest
+            return convert_list
+
+        arguments_list = convert(args)
+        if self.use_env:
+            arguments_list.append(env)
         # END PROBLEM 3
         try:
             return self.fn(*arguments_list)
@@ -249,6 +281,12 @@ def do_define_form(expressions, env):
         validate_form(expressions, 2, 2)  # Checks that expressions is a list of length exactly 2
         # BEGIN PROBLEM 5
         "*** YOUR CODE HERE ***"
+        if type(expressions.rest.first) is Pair:
+            env.define(target, scheme_eval(expressions.rest.first, env))
+            return target
+        else:
+            env.define(target, expressions.rest.first)
+            return target
         # END PROBLEM 5
     elif isinstance(target, Pair) and scheme_symbolp(target.first):
         # BEGIN PROBLEM 9
@@ -269,6 +307,7 @@ def do_quote_form(expressions, env):
     validate_form(expressions, 1, 1)
     # BEGIN PROBLEM 6
     "*** YOUR CODE HERE ***"
+    return expressions.first
     # END PROBLEM 6
 
 
