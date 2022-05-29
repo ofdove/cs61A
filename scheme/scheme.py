@@ -398,6 +398,15 @@ def do_and_form(expressions, env):
     """
     # BEGIN PROBLEM 12
     "*** YOUR CODE HERE ***"
+    while expressions is not nil:
+        register = scheme_eval(expressions.first, env)
+        if is_false_primitive(register):
+            return False
+        else:
+            if expressions.rest is nil:
+                return register
+            expressions = expressions.rest
+    return True
     # END PROBLEM 12
 
 
@@ -416,6 +425,16 @@ def do_or_form(expressions, env):
     """
     # BEGIN PROBLEM 12
     "*** YOUR CODE HERE ***"
+    while expressions is not nil:
+        register = scheme_eval(expressions.first, env)
+        if is_true_primitive(register):
+            return register
+        else:
+            if expressions.rest is nil:
+                return False
+            expressions = expressions.rest
+    return False
+
     # END PROBLEM 12
 
 
