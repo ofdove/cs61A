@@ -456,6 +456,17 @@ def do_cond_form(expressions, env):
         if is_true_primitive(test):
             # BEGIN PROBLEM 13
             "*** YOUR CODE HERE ***"
+            if clause.first == "else":
+                if clause.rest is not nil:
+                    return eval_all(clause.rest, env)
+                else:
+                    raise SchemeError("else must have a clause followed")
+            else:
+                if is_true_primitive(test):
+                    if clause.rest is not nil:
+                        return eval_all(clause.rest, env)
+                    else:
+                        return test
             # END PROBLEM 13
         expressions = expressions.rest
 
