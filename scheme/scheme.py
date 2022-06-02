@@ -493,6 +493,13 @@ def make_let_frame(bindings, env):
     names = values = nil
     # BEGIN PROBLEM 14
     "*** YOUR CODE HERE ***"
+    while bindings is not nil:
+        binding = bindings.first
+        validate_form(binding, 2, 2)
+        names = Pair(binding.first, names)
+        values = Pair(scheme_eval(binding.rest.first, env), values)
+        bindings = bindings.rest
+    validate_formals(names)
     # END PROBLEM 14
     return env.make_child_frame(names, values)
 

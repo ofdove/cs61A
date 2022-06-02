@@ -14,6 +14,11 @@
 (define (enumerate s)
   ; BEGIN PROBLEM 15
   'replace-this-line
+  (define inner s counter
+    (cond
+     ((null? s) nil)
+     (else cons (list count (car s)) (inner cdr (s) (+ 1 counter)))))
+  (inner s 0)
   )
   ; END PROBLEM 15
 
