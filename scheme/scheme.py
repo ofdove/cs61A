@@ -1,5 +1,3 @@
-"""A Scheme interpreter and its read-eval-print loop."""
-
 import sys
 import os
 
@@ -636,6 +634,10 @@ class MuProcedure(Procedure):
 
     # BEGIN PROBLEM EC
     "*** YOUR CODE HERE ***"
+
+    def make_call_frame(self, args, env):
+        return env.make_child_frame(self.formals, args)
+
     # END PROBLEM EC
 
     def __str__(self):
@@ -652,6 +654,7 @@ def do_mu_form(expressions, env):
     validate_formals(formals)
     # BEGIN PROBLEM EC
     "*** YOUR CODE HERE ***"
+    return MuProcedure(formals, expressions.rest)
     # END PROBLEM EC
 
 
